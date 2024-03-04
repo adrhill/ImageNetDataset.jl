@@ -1,0 +1,7 @@
+name = "ImageNetDataset"
+uuid = "d141d81c-f7c4-4296-8313-8866e6f9f78a"
+authors = ["Adrian Hill <gh@adrianhill.de>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.6"
