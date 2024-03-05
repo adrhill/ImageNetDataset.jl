@@ -51,8 +51,10 @@ function inverse_normalize!(x, μ, σ)
 end
 
 # Load image from file path
-function load_image(path::AbstractString, output_size, T::Type=Float32)
-    JpegTurbo.jpeg_decode(RGB{T}, path; preferred_size=output_size)
+load_image(path::AbstractString, T::Type=Float32) = JpegTurbo.jpeg_decode(RGB{T}, path)
+
+function load_image(path::AbstractString, preferred_size::NTuple{2,Int}, T::Type=Float32)
+    JpegTurbo.jpeg_decode(RGB{T}, path; preferred_size=preferred_size)
 end
 
 # Take rectangle of pixels of shape `output_size` at the center of image `im`
