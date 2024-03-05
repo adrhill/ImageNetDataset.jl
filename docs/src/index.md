@@ -8,7 +8,3 @@ Documentation for [ImageNetDataset](https://github.com/adrhill/ImageNetDataset.j
 
 ```@index
 ```
-
-```@autodocs
-Modules = [ImageNetDataset]
-```

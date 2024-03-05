@@ -1,7 +1,9 @@
 using ImageNetDataset
 using Documenter
 
-DocMeta.setdocmeta!(ImageNetDataset, :DocTestSetup, :(using ImageNetDataset); recursive=true)
+DocMeta.setdocmeta!(
+    ImageNetDataset, :DocTestSetup, :(using ImageNetDataset); recursive=true
+)
 
 makedocs(;
     modules=[ImageNetDataset],
@@ -14,10 +16,9 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Installation" => "installation.md",
+        "API Reference" => "api.md",
     ],
 )
 
-deploydocs(;
-    repo="github.com/adrhill/ImageNetDataset.jl",
-    devbranch="main",
-)
+deploydocs(; repo="github.com/adrhill/ImageNetDataset.jl", devbranch="main")
