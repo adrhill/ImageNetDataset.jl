@@ -6,9 +6,25 @@ CurrentModule = ImageNetDataset
 
 Documentation for [ImageNetDataset](https://github.com/adrhill/ImageNetDataset.jl).
 
-```@index
+## API Reference
+### Dataset
+```@docs
+ImageNet
+convert2image
 ```
 
-```@autodocs
-Modules = [ImageNetDataset]
+### Preprocessing
+```@docs
+AbstractTransform
+CenterCropNormalize
+```
+
+Preprocessing transforms can also be applied manually:
+```@docs
+transform
+inverse_transform
+```
+
+# Index
+```@index
 ```
