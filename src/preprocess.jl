@@ -79,9 +79,9 @@ according to `mean` and `std`.
 Applied using `transform` and `inverse_transform`.
 
 ## Keyword arguments:
-- `size`: Output size of the center-crop. Defaults to $OUTPUT_SIZE.
-- `mean`: Mean of the normalization over color channels. Defaults to $PYTORCH_MEAN.
-- `std`: Standard deviation of the normalization over color channels Defaults to $PYTORCH_STD.
+- `size`: Output size of the center-crop. Defaults to `$OUTPUT_SIZE`.
+- `mean`: Mean of the normalization over color channels. Defaults to `$PYTORCH_MEAN`.
+- `std`: Standard deviation of the normalization over color channels Defaults to `$PYTORCH_STD`.
 
 """
 Base.@kwdef struct CenterCropNormalize{T} <: AbstractTransform

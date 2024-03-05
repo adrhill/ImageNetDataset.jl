@@ -37,6 +37,7 @@ end
     ImageNet([split])
 
 The ImageNet 2012 Classification Dataset (ILSVRC 2012-2017).
+
 This is the most highly-used subset of ImageNet. It spans 1000 object classes and contains
 1,281,167 training images, 50,000 validation images and 100,000 test images.
 By defaults, each image is in 224x224x3 format using RGB color space.
@@ -51,7 +52,7 @@ $ARGUMENTS_SUPERVISED_ARRAY
     Defaults to `:train`.
 - `transform`: preprocessor applied to convert an image file to an array.
     Assumes a file path as input and an array in WHC format as output.
-    Defaults to `CenterCropNormalize`, which applies a center-crop
+    Defaults to [`CenterCropNormalize`](@ref), which applies a center-cropping view
     and normalization using coefficients from PyTorch's vision models.
 
 # Fields
@@ -165,8 +166,8 @@ get_features(d::ImageNet, i::Integer) = transform(d.transform, d.paths[i])
 get_features(d::ImageNet, is::AbstractVector) = StackView(get_features.(Ref(d), is))
 
 """
-    convert2image(d, i)
-    convert2image(d, x)
+    convert2image(dataset::ImageNet, i)
+    convert2image(dataset::ImageNet, x)
 
 Convert the observation(s) `i` from dataset `d` to image(s).
 It can also convert a numerical array `x`.

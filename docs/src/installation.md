@@ -22,18 +22,20 @@ ImageNet
     │   └── ...
     └── ...
 ```
-If your existing copy of the ImageNet dataset uses another file structure,
-we recommend to create symbolic links, e.g. using `ln` on Unix-like operating
-systems:
+
+DataDeps.jl expects this `ImageNet` directory to live in `~/.julia/datadeps/`.
+If you already have an existing copy of the ImageNet dataset,
+we recommend to create symbolic links, e.g. using `ln` on Unix-like operating systems:
 ```bash
-cd ~/.julia/datadeps
-
-mkdir -p ImageNet/val
-ln -s my/path/to/imagenet/val ImageNet/val
-
-mkdir -p ImageNet/devkit/data
-ln -s my/path/to/imagenet/devkit/data ImageNet/devkit/data
+ln -s my/path/to/ImageNet ~/.julia/datadeps/ImageNet
 ```
+
+Im case your existing file structure is completely different, we recommend setting
+individual symbolic links to the directories
+* `~/.julia/datadeps/ImageNet/train`
+* `~/.julia/datadeps/ImageNet/val`
+* `~/.julia/datadeps/ImageNet/test`
+* `~/.julia/datadeps/ImageNet/devkit`
 
 ## New installation
 Download the following files from the [ILSVRC2012 download page](https://image-net.org/challenges/LSVRC/2012/2012-downloads.php):
@@ -67,8 +69,9 @@ cd ../..
 mkdir -p ImageNet/devkit && tar -xvf ILSVRC2012_devkit_t12.tar.gz -C ImageNet/devkit --strip-components=1
 ```
 
-And run the [following script](https://github.com/soumith/imagenetloader.torch/blob/master/valprep.sh) 
-[adapted from soumith](https://github.com/soumith/imagenetloader.torch/blob/master/valprep.sh) to create all class directories and move images into corresponding directories:
+And run the following script 
+[adapted from soumith](https://github.com/soumith/imagenetloader.torch/blob/master/valprep.sh) 
+to create all class directories and move images into corresponding directories:
 
 ```bash
 cd ImageNet/val
