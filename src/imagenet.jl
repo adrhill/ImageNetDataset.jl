@@ -26,7 +26,7 @@ function __init__imagenet()
             It is therefore required that you download this dataset manually.
 
             Please follow the instructions at
-            https://github.com/adrhill/ImageNetDataset.jl/blob/master/docs/src/datasets/imagenet_installation.md.
+            https://adrhill.github.io/ImageNetDataset.jl/dev/installation/
             """,
         ),
     )
@@ -40,8 +40,8 @@ The ImageNet 2012 Classification Dataset (ILSVRC 2012-2017).
 
 This is the most highly-used subset of ImageNet. It spans 1000 object classes and contains
 1,281,167 training images, 50,000 validation images and 100,000 test images.
-By defaults, each image is in 224x224x3 format using RGB color space.
-This can be changed by modifying the preprocessor.
+By defaults, each image is in `224 × 224 × 3` format in RGB color space.
+This can be changed by modifying the preprocessor `transform`.
 
 # Arguments
 
@@ -73,7 +73,7 @@ $METHODS_SUPERVISED_ARRAY
 # Examples
 
 ```julia-repl
-julia> using MLDatasets: ImageNet
+julia> using ImageNetDataset
 
 julia> dataset = ImageNet(:val);
 

@@ -3,7 +3,7 @@ The ImageNet 2012 Classification Dataset (ILSVRC 2012-2017) can be downloaded at
 [image-net.org](https://image-net.org/) after signing up and accepting the terms of access.
 It is therefore required that you download this dataset manually.
 
-## Existing installation
+## Existing Installation
 The dataset structure is assumed to look as follows:
 ```
 ImageNet
@@ -23,21 +23,41 @@ ImageNet
     └── ...
 ```
 
-DataDeps.jl expects this `ImageNet` directory to live in `~/.julia/datadeps/`.
-If you already have an existing copy of the ImageNet dataset,
-we recommend to create symbolic links, e.g. using `ln` on Unix-like operating systems:
+!!! tip "Using individual splits"
+    ImageNetDataset.jl can be used to load a single split 
+    and doesn't require all subdirectories `train`, `test` and `val` to be available.
+
+ImageNetDataset.jl expects the `ImageNet` directory to live in `~/.julia/datadeps/`.
+If this structure is not given, we offer two solutions:
+
+### Option 1: Specifying custom directories
+When creating an [`ImageNet`](@ref) dataset, a custom root directory can be specified via the keyword argument `dir`:
+
+```julia
+dir = joinpath(homedir(), "Path", "To", "ImageNet")
+dataset = ImageNet(; dir=dir)
+```
+
+If the existing subdirectory names differ from `train`, `val`, `test` and `devkit` as well, 
+they can be changed via the keyword arguments `train_dir`, `val_dir`, `test_dir` and `devkit_dir`.
+
+### Option 2: Using symbolic links
+Instead of manually specifying directories,
+you can also create a symbolic link from your existing installation to `~/.julia/datadeps/ImageNet`.
+
+On Unix-like operating systems, this can be done using `ln`:
 ```bash
 ln -s my/path/to/ImageNet ~/.julia/datadeps/ImageNet
 ```
 
-Im case your existing file structure is completely different, we recommend setting
-individual symbolic links to the directories
+In case the subdirectory structure is different as well, multiple symbolic links 
+can be set to the following directories:
 * `~/.julia/datadeps/ImageNet/train`
 * `~/.julia/datadeps/ImageNet/val`
 * `~/.julia/datadeps/ImageNet/test`
 * `~/.julia/datadeps/ImageNet/devkit`
 
-## New installation
+## New Installation
 Download the following files from the [ILSVRC2012 download page](https://image-net.org/challenges/LSVRC/2012/2012-downloads.php):
 
 | Name                          | File name                           | Size  | Note                               |
@@ -77,4 +97,4 @@ to create all class directories and move images into corresponding directories:
 cd ImageNet/val
 wget -qO- https://raw.githubusercontent.com/adrhill/ImageNetDataset.jl/master/docs/src/valprep.sh | bash
 ```
-
+    
