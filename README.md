@@ -20,16 +20,18 @@ Afterwards, add this package via
 julia> ]add https://github.com/adrhill/ImageNetDataset.jl
 ```
 
-## Example
+## Examples
 By default, the ImageNet dataset will be loaded with the `CenterCropNormalize` transformation.
 
 This uses [JpegTurbo.jl](https://github.com/JuliaIO/JpegTurbo.jl) to open the image
 and applies a center-cropping view to `(224, 224)` resolution to it.
 Afterwards, the image is normalized over color channels using normalization constants 
 which are compatible with most pretrained models from [Metalhead.jl](https://github.com/FluxML/Metalhead.jl).
-The output is in `WHCN` format (width, height, color channels, batchsize).
+The output is in `WHC[N]` format (width, height, color channels, batchsize).
 
 ```julia
+using ImageNetDataset
+
 dataset = ImageNet(:val)            # load validation set
 X, y = dataset[1:5]                 # load features and targets
 
@@ -38,6 +40,7 @@ convert2image(dataset, X)           # convert features back to images
 dataset.metadata["class_names"][y]  # obtain class names
 ```
 
+### Custom preprocessing
 The dataset can also be loaded in a custom size with custom normalization parameters
 by configuring the `CenterCropNormalize` preprocessing transformation:
 ```julia
@@ -51,6 +54,20 @@ dataset = ImageNet(:val; transform=transform)
 ```
 
 Custom transformations can be implemented by extending `AbstractTransformation`.
+
+### DataAugmentation.jl compatibility
+Alternatively, ImageNetDataset is compatible with transformations from 
+[DataAugmentation.jl](https://github.com/FluxML/DataAugmentation.jl/):
+
+```julia
+using ImageNetDataset, DataAugmentation
+
+transform = CenterResizeCrop((224, 224)) |> ImageToTensor() |> Normalize(mean, std)  
+dataset = ImageNet(:val; transform=transform)
+```
+
+> [!WARNING]
+> Note that DataAugmentation.jl returns features in `HWC[N]` format instead of `WHC[N]`.
 
 ## Related packages
 

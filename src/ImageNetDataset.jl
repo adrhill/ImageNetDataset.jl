@@ -16,6 +16,10 @@ include("preprocess.jl")
 include("utils.jl")
 include("imagenet.jl")
 
+if !isdefined(Base, :get_extension)
+    include("../ext/ImageNetDatasetDataAugmentationExt.jl")
+end
+
 __init__() = __init__imagenet()
 
 # Core functionality
