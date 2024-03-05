@@ -14,10 +14,7 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-        "Installation" => "installation.md",
-    ],
+    pages=["Home" => "index.md", "Installation" => "installation.md"],
 )
 
 deploydocs(; repo="github.com/adrhill/ImageNetDataset.jl", devbranch="main")
