@@ -1,6 +1,7 @@
 is_jpeg(path) = endswith(path, ".JPEG")
 
 function get_datadep_dir(depname, dir=nothing)
+    @show depname dir
     if isnothing(dir)
         # use DataDeps defaults
         return @datadep_str depname
@@ -11,7 +12,7 @@ function get_datadep_dir(depname, dir=nothing)
     end
 end
 
-function get_file_paths(path::AbstractString; recursive=true)
+function get_file_paths(path; recursive=true)
     images = String[]
     if isfile(path)
         is_jpeg(path) && push!(images, path)
@@ -29,12 +30,14 @@ function get_file_paths(path::AbstractString; recursive=true)
         error("$path must be a directory containing JPEG images.")
     end
 
-    isempty(images) && @warn("No images found under $path.")
+    isempty(images) && @warn("No JPEG images found under $path.")
     return images
 end
 
-function get_metadata(file::AbstractString)
-    meta = matread(file)["synsets"]
+get_metadata(uri::URI) = get_metadata(uri.path)
+
+function get_metadata(path::AbstractString)
+    meta = matread(path)["synsets"]
 
     # Only leaf nodes in WordNet metadata correspond to classes
     is_child = iszero.(meta["num_children"])

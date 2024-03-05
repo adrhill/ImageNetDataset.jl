@@ -49,7 +49,7 @@ $ARGUMENTS_SUPERVISED_ARRAY
     Default to `"train"`, `"val"`, `"test"` and `"devkit"`.
 - `split`: selects the data partition. Can take the values `:train:`, `:val` and `:test`.
     Defaults to `:train`.
-- `preprocessing`: preprocessor applied to an image to convert it to an array.
+- `transform`: preprocessor applied to convert an image file to an array.
     Assumes a file path as input and an array in WHC format as output.
     Defaults to `CenterCropNormalize`, which applies a center-crop
     and normalization using coefficients from PyTorch's vision models.
@@ -57,12 +57,12 @@ $ARGUMENTS_SUPERVISED_ARRAY
 # Fields
 
 - `split`: Symbol indicating the selected data partition
-- `preprocessor`: Preprocessing pipeline. Can be configured to select output dimensions and type.
+- `transform`: Preprocessing pipeline. Can be configured to select output dimensions and type.
 - `paths`: paths to ImageNet images
 - `targets`: An array storing the targets for supervised learning.
 - `metadata`: A dictionary containing additional information on the dataset.
 
-Also refer to [`AbstractPreprocessor`](@ref), [`CenterCropNormalize`](@ref).
+Also refer to [`AbstractTransform`](@ref), [`CenterCropNormalize`](@ref).
 
 # Methods
 
@@ -111,9 +111,9 @@ julia> dataset.metadata["class_names"][y]
 
 [1]: [Russakovsky et al., ImageNet Large Scale Visual Recognition Challenge](https://arxiv.org/abs/1409.0575)
 """
-struct ImageNet{P<:AbstractPreprocessor,S<:AbstractString} # <: SupervisedDataset
+struct ImageNet{T,S<:AbstractString} # <: SupervisedDataset
     split::Symbol
-    preprocessor::P
+    transform::T
     paths::Vector{S}
     targets::Vector{Int}
     metadata::Dict{String,Any}
@@ -123,7 +123,7 @@ ImageNet(; split=:train, kws...) = ImageNet(split; kws...)
 
 function ImageNet(
     split::Symbol;
-    preprocessor=CenterCropNormalize(),
+    transform=CenterCropNormalize(),
     dir=nothing,
     train_dir="train",
     val_dir="val",
@@ -149,19 +149,45 @@ function ImageNet(
         paths = get_file_paths(joinpath(root_dir, test_dir))
         @assert length(paths) == TESTSET_SIZE
     end
-    targets = [metadata["wnid_to_label"][wnid] for wnid in get_wnids(dataset)]
-    return ImageNet(split, preprocessor, paths, targets, metadata)
+    targets = [metadata["wnid_to_label"][wnid] for wnid in get_wnids(paths)]
+    return ImageNet(split, transform, paths, targets, metadata)
 end
-
-convert2image(d::ImageNet, x::AbstractArray) = inverse_transform(d.preprocessor, x)
 
 Base.length(d::ImageNet) = length(d.paths)
 
-const IMAGENET_MEM_WARNING = """Loading the entire ImageNet dataset into memory might not be possible.
+const IMAGENET_MEMORY_WARNING = """Loading the entire ImageNet dataset into memory might not be possible.
     If you are sure you want to load all of ImageNet, use `dataset[1:end]` instead of `dataset[:]`.
     """
-Base.getindex(::ImageNet, ::Colon) = throw(ArgumentError(IMAGENET_MEM_WARNING))
-Base.getindex(d::ImageNet, i::Integer) = (features=d.dataset[i], targets=d.targets[i])
-function Base.getindex(d::ImageNet, is::AbstractVector)
-    return (features=StackView(d.dataset[is]), targets=d.targets[is])
+Base.getindex(::ImageNet, ::Colon) = throw(ArgumentError(IMAGENET_MEMORY_WARNING))
+Base.getindex(d::ImageNet, i) = (features=get_features(d, i), targets=d.targets[i])
+
+get_features(d::ImageNet, i::Integer) = transform(d.transform, d.paths[i])
+get_features(d::ImageNet, is::AbstractVector) = StackView(get_features.(Ref(d), is))
+
+"""
+    convert2image(d, i)
+    convert2image(d, x)
+
+Convert the observation(s) `i` from dataset `d` to image(s).
+It can also convert a numerical array `x`.
+
+# Examples
+
+```julia-repl
+julia> using ImageNetDataset, ImageInTerminal
+
+julia> d = ImageNet()
+
+julia> convert2image(d, 1:2)
+# You should see 2 images in the terminal
+
+julia> x = d[1].features;
+
+julia> convert2image(MNIST, x) # or convert2image(d, x)
+```
+"""
+convert2image(d::ImageNet, x::AbstractArray) = inverse_transform(d.transform, x)
+convert2image(d::ImageNet, i::Integer) = inverse_transform(d.transform, get_features(d, i))
+function convert2image(d::ImageNet, is::AbstractRange)
+    inverse_transform(d.transform, get_features(d, is))
 end

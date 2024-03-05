@@ -10,6 +10,7 @@ using ImageCore: channelview, colorview, AbstractRGB, RGB
 using StackViews: StackView
 using JpegTurbo
 using MAT: matread # required to read metadata
+using URIs: URI
 
 include("preprocess.jl")
 include("utils.jl")
@@ -17,6 +18,11 @@ include("imagenet.jl")
 
 __init__() = __init__imagenet()
 
-export AbstractPreprocessor, CenterCropNormalize
+# Core functionality
 export ImageNet
+export convert2image
+
+# Preprocessing
+export AbstractTransform, CenterCropNormalize
+export transform, inverse_transform
 end

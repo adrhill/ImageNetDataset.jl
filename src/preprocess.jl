@@ -1,15 +1,33 @@
+#===========#
+# Interface #
+#===========#
+
 """
-    AbstractPreprocessor
+    AbstractTransform
 
 Abstract type of ImageNet Preprocessing pipelines.
 Expected interface:
 
-- `transform(method, path)`: load image and convert it to WHC array
+- `transform(method, image_path)`: load image and convert it to a WHC array
 - `inverse_transform(method, array)`: convert WHC[N] array to image[s]
 """
-abstract type AbstractPreprocessor end
+abstract type AbstractTransform end
 
-(tfm::AbstractPreprocessor)(path::AbstractString) = transform(tfm, path)
+(tfm::AbstractTransform)(path::AbstractString) = transform(tfm, path)
+
+"""
+    transform(tfm, path)
+
+Load image from path and convert it to a WHC array using preprocessing transformation `tfm`.
+"""
+function transform end
+
+"""
+    inverse_transform(tfm, path)
+
+Convert WHC array to an image by applying the inverse of the preprocessing transformation `tfm`.
+"""
+function inverse_transform end
 
 #===========#
 # Utilities #
@@ -22,6 +40,15 @@ const OUTPUT_SIZE = (224, 224)
 
 normalize(x, μ, σ) = (x .- μ) ./ σ
 inverse_normalize(x, μ, σ) = x .* σ .+ μ
+
+function normalize!(x, μ, σ)
+    @. x = (x - μ) / σ
+    return x
+end
+function inverse_normalize!(x, μ, σ)
+    @. x = x * σ + μ
+    return x
+end
 
 # Load image from file path
 function load_image(path::AbstractString, output_size, T::Type=Float32)
@@ -57,7 +84,7 @@ Applied using `transform` and `inverse_transform`.
 - `std`: Standard deviation of the normalization over color channels Defaults to $PYTORCH_STD.
 
 """
-Base.@kwdef struct CenterCropNormalize{T} <: AbstractPreprocessor
+Base.@kwdef struct CenterCropNormalize{T} <: AbstractTransform
     size::NTuple{2,Int} = OUTPUT_SIZE
     mean::NTuple{3,T} = PYTORCH_MEAN
     std::NTuple{3,T} = PYTORCH_STD
@@ -65,14 +92,8 @@ end
 
 function transform(tfm::CenterCropNormalize{T}, path::AbstractString) where {T}
     im = load_image(path, tfm.size, T)
-    return transform(tfm, im)
-end
-
-function transform(tfm::CenterCropNormalize, im::AbstractMatrix{<:AbstractRGB})
-    # Similar to the validation dataset loader in PyTorch's ImageNet example
-    # https://github.com/pytorch/examples/blob/91ccd7a21be6fa687000beef82fc1e5d7d64e4bd/imagenet/main.py#L223-L230
     im = center_crop(im, tfm.size)
-    im = normalize(channelview(im), tfm.mean, tfm.std)
+    im = normalize!(channelview(im), tfm.mean, tfm.std)
     return PermutedDimsArray(im, (3, 2, 1)) # Convert from Image.jl's CHW to Flux's WHC
 end
 
