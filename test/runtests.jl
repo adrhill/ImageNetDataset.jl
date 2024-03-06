@@ -3,6 +3,7 @@ using Test
 using Aqua
 using JET
 using JuliaFormatter
+using ReferenceTests
 
 @testset "ImageNetDataset.jl" begin
     @testset "Code quality (Aqua.jl)" begin
@@ -16,5 +17,7 @@ using JuliaFormatter
     @testset "Code formatting (JuliaFormatter.jl)" begin
         @test format(ImageNetDataset; verbose=false, overwrite=false)
     end
-    # Write your tests here.
+    @testset "Preprocessing" begin
+        include("test_preprocessing.jl")
+    end
 end
