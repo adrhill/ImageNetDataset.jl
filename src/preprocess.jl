@@ -58,9 +58,12 @@ function load_image(path::AbstractString, preferred_size::NTuple{2,Int}, T::Type
 end
 
 # Take rectangle of pixels of shape `output_size` at the center of image `im`
-function center_crop(im::AbstractMatrix, output_size)
-    h2, w2 = div.(output_size, 2) # half height, half width of view
-    h_adjust, w_adjust = adjust_index.(output_size)
+function center_crop(im::AbstractMatrix, (w, h))
+    # half height, half width of view
+    w2 = div(w, 2)
+    h2 = div(h, 2)
+    w_adjust = adjust_index(w)
+    h_adjust = adjust_index(h)
     return @view im[
         ((div(end, 2) - h2):(div(end, 2) + h2 - h_adjust)) .+ 1,
         ((div(end, 2) - w2):(div(end, 2) + w2 - w_adjust)) .+ 1,
@@ -81,7 +84,7 @@ according to `mean` and `std`.
 Applied using `transform` and `inverse_transform`.
 
 ## Keyword arguments:
-- `size`: Output size of the center-crop. Defaults to `$OUTPUT_SIZE`.
+- `size`: Output size (width, height) of the center-crop. Defaults to `$OUTPUT_SIZE`.
 - `mean`: Mean of the normalization over color channels. Defaults to `$PYTORCH_MEAN`.
 - `std`: Standard deviation of the normalization over color channels Defaults to `$PYTORCH_STD`.
 
