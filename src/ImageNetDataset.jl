@@ -27,6 +27,6 @@ export ImageNet
 export convert2image
 
 # Preprocessing
-export AbstractTransform, CenterCropNormalize
+export AbstractTransform, CenterCropNormalize, RandomCropNormalize
 export transform, inverse_transform
 end

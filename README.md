@@ -40,20 +40,29 @@ convert2image(dataset, X)           # convert features back to images
 dataset.metadata["class_names"][y]  # obtain class names
 ```
 
-### Custom preprocessing
+### Preprocessing
 The dataset can also be loaded in a custom size with custom normalization parameters
-by configuring the `CenterCropNormalize` preprocessing transformation:
+by configuring the preprocessing transformations.
+ImageNetDataset.jl currently provides `CenterCropNormalize` and `RandomCropNormalize`:
+
 ```julia
 output_size = (224, 224)
 mean = (0.485f0, 0.456f0, 0.406f0)
 std  = (0.229f0, 0.224f0, 0.225f0)
 
-transform = CenterCropNormalize(; output_size, mean, std)
+tfm = CenterCropNormalize(; output_size, mean, std)
 
-dataset = ImageNet(:val; transform=transform)
+dataset = ImageNet(:val; transform=tfm)
 ```
 
 Custom transformations can be implemented by extending `AbstractTransformation`.
+
+To apply a transformation outside of the `ImageNet` dataset,
+e.g. to preprocess a single image add a given `path`, run
+
+```julia
+transform(tfm, path)
+```
 
 ### DataAugmentation.jl compatibility
 Alternatively, ImageNetDataset is compatible with transformations from 
@@ -62,12 +71,15 @@ Alternatively, ImageNetDataset is compatible with transformations from
 ```julia
 using ImageNetDataset, DataAugmentation
 
-transform = CenterResizeCrop((224, 224)) |> ImageToTensor() |> Normalize(mean, std)  
-dataset = ImageNet(:val; transform=transform)
+tfm = CenterResizeCrop((224, 224)) |> ImageToTensor() |> Normalize(mean, std)
+
+dataset = ImageNet(:val; transform=tfm)
 ```
 
 > [!WARNING]
 > Note that DataAugmentation.jl returns features in `HWC[N]` format instead of `WHC[N]`.
+> Transformations from DataAugmentation.jl are also slightly less performant
+> and not compatible with `convert2image`. 
 
 ## Related packages
 

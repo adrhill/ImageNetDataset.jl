@@ -75,6 +75,32 @@ end
 
 inverse_transform(tfm::CenterCropNormalize, x) = tensor2img(x, tfm.mean, tfm.std)
 
+"""
+    RandomCropNormalize([; output_size, open_size, mean, std])
+
+Preprocessing pipeline crops an input image to `output_size` at a random position and normalizes it according to `mean` and `std`.
+$DOC_TRANSFORM_OUTPUT
+
+$DOC_TRANSFORM_APPLY
+
+$DOC_TRANSFORM_KWARGS
+"""
+Base.@kwdef struct RandomCropNormalize{T} <: AbstractTransform
+    output_size::NTuple{2,Int} = OUTPUT_SIZE
+    open_size::NTuple{2,Int} = OPEN_SIZE
+    mean::NTuple{3,T} = PYTORCH_MEAN
+    std::NTuple{3,T} = PYTORCH_STD
+end
+
+function transform(tfm::RandomCropNormalize{T}, path::AbstractString) where {T}
+    im = load_image(path, tfm.open_size, T)
+    im = random_crop(im, tfm.output_size)
+    im = normalize!(channelview(im), tfm.mean, tfm.std)
+    return PermutedDimsArray(im, (3, 2, 1)) # Convert from Image.jl's CHW to Flux's WHC
+end
+
+inverse_transform(tfm::RandomCropNormalize, x) = tensor2img(x, tfm.mean, tfm.std)
+
 #===========#
 # Utilities #
 #===========#
@@ -109,6 +135,18 @@ function center_crop(im::AbstractMatrix, (w, h))
         ((div(end, 2) - h_half):(div(end, 2) + h_half - h_adjust)) .+ 1,
         ((div(end, 2) - w_half):(div(end, 2) + w_half - w_adjust)) .+ 1,
     ]
+end
+
+function random_crop(im::AbstractMatrix, (w_out, h_out))
+    h_in, w_in = size(im)
+    h_out > h_in &&
+        throw(ArgumentError("Image of height $h_in can't be cropped to height $h_out"))
+    w_out > w_in &&
+        throw(ArgumentError("Image of width $w_in can't be cropped to width $w_out"))
+
+    h_offset = rand(1:(h_in - h_out + 1))
+    w_offset = rand(1:(w_in - w_out + 1))
+    return @view im[h_offset:(h_offset + h_out - 1), w_offset:(w_offset + w_out - 1)]
 end
 
 adjust_index(i::Integer) = ifelse(iszero(i % 2), 1, 0)
