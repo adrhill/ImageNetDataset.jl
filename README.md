@@ -37,7 +37,7 @@ X, y = dataset[1:5]                 # load features and targets
 
 convert2image(dataset, X)           # convert features back to images
 
-dataset.metadata["class_names"][y]  # obtain class names
+class(dataset, y)                   # obtain class names
 ```
 
 ### Preprocessing

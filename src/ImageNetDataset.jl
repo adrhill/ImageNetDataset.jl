@@ -25,6 +25,7 @@ __init__() = __init__imagenet()
 # Core functionality
 export ImageNet
 export convert2image
+export wnid, class, description
 
 # Preprocessing
 export AbstractTransform, CenterCropNormalize, RandomCropNormalize

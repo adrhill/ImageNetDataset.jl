@@ -26,6 +26,13 @@ transform
 inverse_transform
 ```
 
+### Metadata
+```@docs
+class
+description
+wnid
+```
+
 # Index
 ```@index
 ```
