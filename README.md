@@ -42,7 +42,9 @@ dataset.metadata["class_names"][y]  # obtain class names
 
 ### Preprocessing
 The dataset can also be loaded in a custom size with custom normalization parameters
-by configuring the `CenterCropNormalize` preprocessing transformation:
+by configuring the preprocessing transformations.
+ImageNetDataset.jl currently provides `CenterCropNormalize` and `RandomCropNormalize`:
+
 ```julia
 output_size = (224, 224)
 mean = (0.485f0, 0.456f0, 0.406f0)
@@ -55,7 +57,7 @@ dataset = ImageNet(:val; transform=tfm)
 
 Custom transformations can be implemented by extending `AbstractTransformation`.
 
-To apply a preprocessing transformation outside of the `ImageNet` dataset,
+To apply a transformation outside of the `ImageNet` dataset,
 e.g. to preprocess a single image add a given `path`, run
 
 ```julia
@@ -76,7 +78,8 @@ dataset = ImageNet(:val; transform=tfm)
 
 > [!WARNING]
 > Note that DataAugmentation.jl returns features in `HWC[N]` format instead of `WHC[N]`.
-> Transformations from DataAugmentation.jl are also slightly less performant. 
+> Transformations from DataAugmentation.jl are also slightly less performant
+> and not compatible with `convert2image`. 
 
 ## Related packages
 

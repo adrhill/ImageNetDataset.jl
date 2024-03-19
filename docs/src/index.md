@@ -17,6 +17,7 @@ convert2image
 ```@docs
 AbstractTransform
 CenterCropNormalize
+RandomCropNormalize
 ```
 
 Preprocessing transforms can also be applied manually:
