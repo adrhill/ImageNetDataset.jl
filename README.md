@@ -44,11 +44,11 @@ dataset.metadata["class_names"][y]  # obtain class names
 The dataset can also be loaded in a custom size with custom normalization parameters
 by configuring the `CenterCropNormalize` preprocessing transformation:
 ```julia
-size = (224, 224)
+output_size = (224, 224)
 mean = (0.485f0, 0.456f0, 0.406f0)
 std  = (0.229f0, 0.224f0, 0.225f0)
 
-transform = CenterCropNormalize(size, mean, std)
+transform = CenterCropNormalize(; output_size, mean, std)
 
 dataset = ImageNet(:val; transform=transform)
 ```
