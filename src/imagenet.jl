@@ -192,3 +192,24 @@ convert2image(d::ImageNet, i::Integer) = inverse_transform(d.transform, get_feat
 function convert2image(d::ImageNet, is::AbstractRange)
     inverse_transform(d.transform, get_features(d, is))
 end
+
+"""
+    wnid(dataset, i)
+
+Obtain WordNet ID for given target index `i`.
+"""
+wnid(d::ImageNet, i) = d.metadata["class_WNIDs"][i]
+
+"""
+    class(dataset, i)
+
+Obtain class name for given target index `i`.
+"""
+class(d::ImageNet, i) = d.metadata["class_names"][i]
+
+"""
+    description(dataset, i)
+
+Obtain class class description for given target index `i`.
+"""
+description(d::ImageNet, i) = d.metadata["class_description"][i]
