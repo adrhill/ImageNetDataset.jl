@@ -29,6 +29,19 @@ A = transform(tfm, path)
 img = inverse_transform(tfm, A)
 @test_reference "references/CenterCropNormalize_100_50_cat.txt" img # same as before
 
+## RandomCropNormalize
+tfm = RandomCropNormalize()
+A = transform(tfm, path)
+@test size(A) == (224, 224, 3)
+img = inverse_transform(tfm, A)
+@test size(img) == (224, 224)
+
+tfm = RandomCropNormalize(; output_size=(60, 40))
+A = transform(tfm, path)
+@test size(A) == (60, 40, 3)
+img = inverse_transform(tfm, A)
+@test size(img) == (40, 60)
+
 # DataAugmentations.jl
 tfm = CenterResizeCrop((60, 40)) |> ImageToTensor() |> Normalize(default_mean, default_std)
 A = transform(tfm, path)

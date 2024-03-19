@@ -68,6 +68,7 @@ dataset = ImageNet(:val; transform=transform)
 
 > [!WARNING]
 > Note that DataAugmentation.jl returns features in `HWC[N]` format instead of `WHC[N]`.
+> Transformations from DataAugmentation.jl are also slightly less performant. 
 
 ## Related packages
 
