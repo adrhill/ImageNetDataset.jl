@@ -6,7 +6,8 @@ module ImageNetDataset
 # Copyright (c) 2015 Hiroyuki Shindo and contributors.
 
 using DataDeps
-using ImageCore: channelview, colorview, AbstractRGB, RGB
+using ImageCore: channelview, colorview
+using ImageCore: Colorant, AbstractRGB, RGB
 using StackViews: StackView
 using JpegTurbo
 using MAT: matread # required to read metadata
