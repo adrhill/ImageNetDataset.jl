@@ -68,6 +68,10 @@ end
 
 function transform(tfm::CenterCropNormalize{T}, path::AbstractString) where {T}
     im = load_image(path, tfm.open_size, T)
+    return transform(tfm, im)
+end
+
+function transform(tfm::CenterCropNormalize{T}, im::AbstractMatrix{<:Colorant}) where {T}
     im = center_crop(im, tfm.output_size)
     im = normalize!(channelview(im), tfm.mean, tfm.std)
     return PermutedDimsArray(im, (3, 2, 1)) # Convert from Image.jl's CHW to Flux's WHC
@@ -94,6 +98,10 @@ end
 
 function transform(tfm::RandomCropNormalize{T}, path::AbstractString) where {T}
     im = load_image(path, tfm.open_size, T)
+    return transform(tfm, im)
+end
+
+function transform(tfm::RandomCropNormalize{T}, im::AbstractMatrix{<:Colorant}) where {T}
     im = random_crop(im, tfm.output_size)
     im = normalize!(channelview(im), tfm.mean, tfm.std)
     return PermutedDimsArray(im, (3, 2, 1)) # Convert from Image.jl's CHW to Flux's WHC
