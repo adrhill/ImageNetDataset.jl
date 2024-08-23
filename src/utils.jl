@@ -56,4 +56,4 @@ end
 
 # Get WordNet ID from path
 get_wnids(paths::AbstractVector{<:AbstractString}) = path_to_wnid.(paths)
-path_to_wnid(path::AbstractString) = split(path, "/")[end - 1]
+path_to_wnid(path::AbstractString) = splitpath(path)[end - 1]
